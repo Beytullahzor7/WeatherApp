@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:weatherdb
+  h2:
+    console:
+      enabled: true
+  config:
+    import: optional:file:.env[.properties]
+
+weather-stack:
+  api-url: http://api.weatherstack.com/current
+  api-key: ${API_KEY:default}
+
+resilience4j:
+  ratelimiter:
+    instances:
+      basic: #buradaki basic kismi farkli bir sey de olabilir ne yazdiysam onu ilgili endpointte gostermem gerekir
+        limit-for-period: 100 #belirleyecegim limit icerisinde 1 kullanici kac istekte bulunabilir
+        limit-refresh-period: 10m #10 dakika icerisinde 1 kullanici max 100 istekte bulunabilir
+        timeout-duration: 10s #Zaman asimina ugrayan kullanici 10 saniye gectikten sonra tekrar istekte bulunabilir
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "*"
+          - prometheus
